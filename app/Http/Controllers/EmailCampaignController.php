@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\SendEmailCampaignJob;
 use App\Mail\EmailCampaignMail;
 use App\Models\Customer;
 use App\Models\EmailCampaign;
@@ -28,7 +29,7 @@ class EmailCampaignController extends Controller
                     'email' => $email,
                 ]);
                 // OTP Email Address
-                Mail::to($email)->send(new EmailCampaignMail($offerSub, $offerBody));
+                SendEmailCampaignJob::dispatch($email, $offerSub, $offerBody);
             }
             return $this->success('Offer send success', 200);
         } catch(Exception $e) {
