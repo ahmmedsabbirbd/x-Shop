@@ -3,6 +3,9 @@
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\SocialiteController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\EmailCampaignController;
 use App\Http\Middleware\TokenVerificationMiddleware;
 use Illuminate\Support\Facades\Route;
 
@@ -24,11 +27,13 @@ Route::get('/sendOtp',[UserController::class,'SendOtpPage']);
 Route::get('/verifyOtp',[UserController::class,'VerifyOTPPage']);
 Route::get('/resetPassword',[UserController::class,'ResetPasswordPage'])->middleware(TokenVerificationMiddleware::class);
 Route::get('/userProfile',[UserController::class,'ProfilePage'])->middleware(TokenVerificationMiddleware::class);
-Route::post('/photo-update',[UserController::class,'processImage'])->middleware(TokenVerificationMiddleware::class);
 Route::get('/dashboard-image',[UserController::class,'DashBoardImage'])->middleware(TokenVerificationMiddleware::class);
-
+Route::get('/customerPage',[CustomerController::class,'CustomerPage'])->middleware([TokenVerificationMiddleware::class]);
+Route::get('/promotionalPage',[EmailCampaignController::class,'PromotionalPage'])->middleware([TokenVerificationMiddleware::class]);
 
 // API Routes
+
+// User Profile
 Route::post('/user-login', [UserController::class, 'UserLogin']);
 Route::post('/user-registration', [UserController::class, 'UserRegistration']);
 Route::post('/user-send-otp-to-email', [UserController::class, 'UserSendOTPToEmail']);
@@ -49,3 +54,14 @@ Route::get( 'auth/google', [SocialiteController::class, 'googleRedirect'] )->nam
 Route::get( 'auth/google/callback', [SocialiteController::class, 'googleCallback'] );
 
 //Route::get( '/{slug}', [PageController::class, 'show_custom_page'] );
+
+
+// Customer API
+Route::get('/customer-list',[CustomerController::class,'CustomerList'])->middleware([TokenVerificationMiddleware::class]);
+Route::post('/customer-create',[CustomerController::class,'CustomerCreate'])->middleware([TokenVerificationMiddleware::class]);
+Route::post('/customer-update',[CustomerController::class,'CustomerUpdate'])->middleware([TokenVerificationMiddleware::class]);
+Route::post('/customer-by-id',[CustomerController::class,'CustomerById'])->middleware([TokenVerificationMiddleware::class]);
+Route::post('/customer-delete',[CustomerController::class,'CustomerDelete'])->middleware([TokenVerificationMiddleware::class]);
+
+// Email Campaign API
+Route::post('/email-campaign',[EmailCampaignController::class,'SendEmailCampaign'])->middleware([TokenVerificationMiddleware::class]);

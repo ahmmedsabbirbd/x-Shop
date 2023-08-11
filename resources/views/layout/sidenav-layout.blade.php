@@ -81,26 +81,9 @@
         <i class="fa fa-chevron-circle-right  text-dark"></i>
         <span class="side-bar-item-caption">Customer</span>
     </a>
-
-    <a href="{{url("/categoryPage")}}" class="side-bar-item">
+    <a href="{{url('/promotionalPage')}}" class="side-bar-item">
         <i class="fa fa-chevron-circle-right  text-dark"></i>
-        <span class="side-bar-item-caption">Category</span>
-    </a>
-
-    <a href="{{url("/productPage")}}" class="side-bar-item">
-        <i class="fa fa-chevron-circle-right  text-dark"></i>
-        <span class="side-bar-item-caption">Product</span>
-    </a>
-
-
-    <a href="#Getting-Started" class="side-bar-item">
-        <i class="fa fa-chevron-circle-right  text-dark"></i>
-        <span class="side-bar-item-caption">Invoice</span>
-    </a>
-
-    <a href="#Getting-Started" class="side-bar-item">
-        <i class="fa fa-chevron-circle-right  text-dark"></i>
-        <span class="side-bar-item-caption">Report</span>
+        <span class="side-bar-item-caption">Email Campaigns</span>
     </a>
 
 
