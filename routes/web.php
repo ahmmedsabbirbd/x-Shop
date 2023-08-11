@@ -1,64 +1,51 @@
 <?php
 
-use App\Http\Controllers\AuthenticationController;
-use App\Http\Controllers\CustomerController;
-use App\Http\Controllers\PromotionalMailController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\SocialiteController;
+use App\Http\Controllers\UserController;
+use App\Http\Middleware\TokenVerificationMiddleware;
 use Illuminate\Support\Facades\Route;
 
-Route::get( '/dashboard', function () {
-    return view( 'pages.dashboard' );
-} )->name( 'dashboard' )->middleware( 'verify.token' );
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider and all of them will
+| be assigned to the "web" middleware group. Make something great!
+|
+*/
 
-Route::controller( AuthenticationController::class )->group( function () {
-    Route::middleware( 'redirect.VerifyToken' )->group( function () {
-        Route::get( '/register', 'registerPage' )->name( 'register' );
-        Route::post( '/register', 'registration' );
+// Page Routes
+Route::get('/userLogin',[UserController::class,'LoginPage'])->name('login');
+Route::get('/userRegistration',[UserController::class,'RegistrationPage']);
+Route::get('/sendOtp',[UserController::class,'SendOtpPage']);
+Route::get('/verifyOtp',[UserController::class,'VerifyOTPPage']);
+Route::get('/resetPassword',[UserController::class,'ResetPasswordPage'])->middleware(TokenVerificationMiddleware::class);
+Route::get('/userProfile',[UserController::class,'ProfilePage'])->middleware(TokenVerificationMiddleware::class);
+Route::post('/photo-update',[UserController::class,'processImage'])->middleware(TokenVerificationMiddleware::class);
+Route::get('/dashboard-image',[UserController::class,'DashBoardImage'])->middleware(TokenVerificationMiddleware::class);
 
-        Route::get( '/', 'loginPage' )->name( 'login' );
-        Route::post( '/user/login', 'userLogin' );
 
-        Route::get( '/send/otp', 'forgetPage' )->name( 'forgot.password' );
-        Route::post( '/send/otp', 'sendOtp' );
+// API Routes
+Route::post('/user-login', [UserController::class, 'UserLogin']);
+Route::post('/user-registration', [UserController::class, 'UserRegistration']);
+Route::post('/user-send-otp-to-email', [UserController::class, 'UserSendOTPToEmail']);
+Route::post('/otp-verify', [UserController::class, 'OTPVerify']);
+Route::post('/set-password', [UserController::class, 'SetPassword'])->middleware(TokenVerificationMiddleware::class);
+Route::get('/profile-details', [UserController::class, 'profileDetails'])->middleware(TokenVerificationMiddleware::class);
+Route::post('/profile-update', [UserController::class, 'profileUpdate'])->middleware(TokenVerificationMiddleware::class);
 
-        Route::get( '/verify/otp', 'verifyOtpPage' )->name( 'verify.otp' );
-        Route::get( '/countdown/{email}', 'showCountdown' )->name( 'countdown' )->withoutMiddleware( 'redirect.VerifyToken' );
-        Route::post( '/verify/otp', 'verifyOtp' );
-    } );
+// Logout
+Route::get('/logout',[UserController::class,'userLogout'])->middleware(TokenVerificationMiddleware::class);
+Route::get('/dashboard',[DashboardController::class,'DashboardPage'])->middleware(TokenVerificationMiddleware::class);
 
-    Route::middleware( 'verify.token' )->group( function () {
-        Route::get( '/users', 'allUsers' );
-        Route::post( '/reset/password', 'resetPassword' );
-        Route::get( '/reset/password', 'resetPasswordPage' )->name( 'reset.password' );
+// Login With facebook
+Route::get( 'auth/facebook', [SocialiteController::class, 'facebookRedirect'] )->name( 'facebook.login' );
+Route::get( 'auth/facebook/callback', [SocialiteController::class, 'facebookCallback'] );
+// Login With google
+Route::get( 'auth/google', [SocialiteController::class, 'googleRedirect'] )->name( 'google.login' );
+Route::get( 'auth/google/callback', [SocialiteController::class, 'googleCallback'] );
 
-        Route::get( '/profiles', 'profilePage' )->name( 'profile.page' );
-        Route::get( '/profile/details', 'profileDetails' )->name( 'profile.details' );
-        Route::patch( '/profile/update', 'profileUpdate' )->name( 'profile.update' );
-        Route::post( '/profile/image', 'profileImgUpdate' )->name( 'profile.image' );
-
-        Route::get( '/change/password', 'changePassword' )->name( 'change.password' );
-        Route::patch( '/change/password', 'updatePassword' )->name( 'password.update' );
-    } );
-
-    Route::get( '/user/logout', 'userLogout' )->name( 'logout' );
-
-} );
-
-Route::middleware( 'verify.token' )->group( function () {
-    Route::controller( CustomerController::class )->group( function () {
-        //Api Routes
-        Route::delete( '/customers/{id}', 'deleteCustomer' )->name( 'delete.customer' );
-        Route::post( '/customers/{id}', 'updateCustomer' )->name( 'update.customer' );
-        Route::get( '/customers/{id}', 'singeCustomer' )->name( 'single.customer' );
-        Route::post( '/customers', 'addCustomer' )->name( 'add.customer' );
-        Route::get( '/customers', 'getCustomers' )->name( 'customers' );
-
-        //Page Routes
-        Route::get( '/customer/list', 'customerPage' )->name( 'customer.page' );
-    } );
-
-    Route::controller( PromotionalMailController::class )->group( function () {
-        //Api Routes
-        Route::post( '/promotional/mail', 'sendPromotionMail' )->name( 'promotion.mail' );
-        Route::get( '/promotional/mail', 'promotionPage' )->name( 'promotion.page' );
-    } );
-} );
+//Route::get( '/{slug}', [PageController::class, 'show_custom_page'] );
